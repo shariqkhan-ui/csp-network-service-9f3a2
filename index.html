@@ -24,6 +24,7 @@ h1{font-size:22px;margin:0 0 3px}.sub{color:var(--mut);font-size:13px;margin:0 0
 .crow .lab{line-height:1.25}.crow .lab .sub{font-size:10.5px}
 .crow .lab{width:172px;color:var(--ink);font-weight:600}.crow .track{flex:1;background:#f1f5f9;border-radius:5px;height:18px;overflow:hidden}
 .crow .sub{color:var(--mut);font-weight:400}
+.crow .val{width:104px;text-align:right;font-variant-numeric:tabular-nums;color:var(--ink);font-weight:700}
 .crow .fill{height:100%;display:flex;align-items:center;padding-left:6px;color:#fff;font-size:11px}
 table{border-collapse:collapse;width:100%;font-size:13px}
 th,td{padding:6px 9px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
@@ -96,7 +97,7 @@ document.getElementById('insights').innerHTML=[
 var order=['Resilient','SLA-slow','Complaints-high','Failing'];
 var gcol={Failing:'#dc2626','Complaints-high':'#f59e0b','SLA-slow':'#f59e0b',Resilient:'#16a34a'};
 var qlab={Resilient:['Low complaint','High SLA'],'SLA-slow':['Low complaint','Low SLA'],'Complaints-high':['High complaint','High SLA'],Failing:['High complaint','Low SLA']};
-function cmpBars(obj){return order.map(function(k){var v=obj.grp[k];var q=qlab[k];return '<div class="crow"><span class="lab">'+q[0]+' · '+q[1]+'<br><span class="sub">'+k+'</span></span><div class="track"><div class="fill" style="width:'+Math.max(v[1],6)+'%;background:'+gcol[k]+'">'+v[0]+' ('+v[1]+'%)</div></div></div>';}).join('');}
+function cmpBars(obj){return order.map(function(k){var v=obj.grp[k];var q=qlab[k];return '<div class="crow"><span class="lab">'+q[0]+' · '+q[1]+'<br><span class="sub">'+k+'</span></span><div class="track"><div class="fill" style="width:'+Math.max(v[1],4)+'%;background:'+gcol[k]+'"></div></div><span class="val">'+v[0]+' CSPs · '+v[1]+'%</span></div>';}).join('');}
 document.getElementById('gn').textContent=C.good.n;document.getElementById('bn2').textContent=C.bad.n;
 document.getElementById('gcmp').innerHTML=cmpBars(C.good);
 document.getElementById('bcmp').innerHTML=cmpBars(C.bad);
@@ -107,9 +108,9 @@ document.getElementById('cards').innerHTML=[
  ['#f59e0b',m.grp['Complaints-high'],'Complaints-high','complaints worse, SLA still ok'],
  ['#f59e0b',m.grp['SLA-slow'],'SLA-slow','complaints ok, SLA below benchmark'],
  ['#0ea5e9',m.grp.Resilient,'Resilient','beats benchmark on both (role models)']
-].map(function(c){return '<div class="card"><b style="color:'+c[0]+'">'+c[1]+'</b><span style="font-weight:600;color:'+c[0]+'">'+c[2]+'</span><span>'+c[3]+'</span></div>';}).join('');
+].map(function(c){return '<div class="card"><b style="color:'+c[0]+'">'+c[1]+' <span style="font-size:13px;color:var(--mut)">('+Math.round(c[1]/m.n_bad*100)+'%)</span></b><span style="font-weight:600;color:'+c[0]+'">'+c[2]+'</span><span>'+c[3]+'</span></div>';}).join('');
 function barRow(label,parts,cols,labels){var tot=parts.reduce(function(a,b){return a+b;},0);
- return '<div class="brow"><span>'+label+'</span><div class="bar">'+parts.map(function(p,i){return '<div style="width:'+(p/tot*100)+'%;background:'+cols[i]+'">'+(p>tot*0.05?p:'')+'</div>';}).join('')+'</div><small>'+labels.map(function(l,i){return l+' '+parts[i];}).join('  ·  ')+'</small></div>';}
+ return '<div class="brow"><span>'+label+'</span><div class="bar">'+parts.map(function(p,i){return '<div style="width:'+(p/tot*100)+'%;background:'+cols[i]+'">'+(p>tot*0.05?p:'')+'</div>';}).join('')+'</div><small>'+labels.map(function(l,i){return l+' '+parts[i]+' ('+Math.round(parts[i]/tot*100)+'%)';}).join('  ·  ')+'</small></div>';}
 document.getElementById('bars').innerHTML=
  barRow('Daily complaint vs benchmark',m.cdist,['#16a34a','#dc2626'],['Better/equal <='+m.bench.cr+'%','Worse >'+m.bench.cr+'%'])+
  barRow('Service SLA vs benchmark',m.sdist,['#16a34a','#dc2626'],['At/above >='+m.bench.sla+'%','Below <'+m.bench.sla+'%']);
