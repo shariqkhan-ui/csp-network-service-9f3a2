@@ -20,8 +20,10 @@ h1{font-size:22px;margin:0 0 3px}.sub{color:var(--mut);font-size:13px;margin:0 0
 .brow{margin-bottom:10px}.brow>span{font-size:12px;color:var(--mut)}
 .cmp{display:grid;grid-template-columns:1fr 1fr;gap:22px}
 .cmp h3{font-size:13px;margin:0 0 8px}
-.crow{display:flex;align-items:center;gap:8px;margin:5px 0;font-size:12px}
-.crow .lab{width:120px;color:var(--mut)}.crow .track{flex:1;background:#f1f5f9;border-radius:5px;height:18px;overflow:hidden}
+.crow{display:flex;align-items:center;gap:8px;margin:9px 0;font-size:12px}
+.crow .lab{line-height:1.25}.crow .lab .sub{font-size:10.5px}
+.crow .lab{width:172px;color:var(--ink);font-weight:600}.crow .track{flex:1;background:#f1f5f9;border-radius:5px;height:18px;overflow:hidden}
+.crow .sub{color:var(--mut);font-weight:400}
 .crow .fill{height:100%;display:flex;align-items:center;padding-left:6px;color:#fff;font-size:11px}
 table{border-collapse:collapse;width:100%;font-size:13px}
 th,td{padding:6px 9px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
@@ -91,13 +93,14 @@ document.getElementById('insights').innerHTML=[
  'So the lever for fewer complaints is <b>service execution / SLA</b>, not network upgrades.'
 ].map(function(t){return '<li>'+t+'</li>';}).join('');
 // benchmark comparison bars
-var order=['Failing','Complaints-high','SLA-slow','Resilient'];
-var gcol={Failing:'#dc2626','Complaints-high':'#f59e0b','SLA-slow':'#f59e0b',Resilient:'#0ea5e9'};
-function cmpBars(obj){return order.map(function(k){var v=obj.grp[k];return '<div class="crow"><span class="lab">'+k+'</span><div class="track"><div class="fill" style="width:'+Math.max(v[1],6)+'%;background:'+gcol[k]+'">'+v[0]+' ('+v[1]+'%)</div></div></div>';}).join('');}
+var order=['Resilient','SLA-slow','Complaints-high','Failing'];
+var gcol={Failing:'#dc2626','Complaints-high':'#f59e0b','SLA-slow':'#f59e0b',Resilient:'#16a34a'};
+var qlab={Resilient:['Low complaint','High SLA'],'SLA-slow':['Low complaint','Low SLA'],'Complaints-high':['High complaint','High SLA'],Failing:['High complaint','Low SLA']};
+function cmpBars(obj){return order.map(function(k){var v=obj.grp[k];var q=qlab[k];return '<div class="crow"><span class="lab">'+q[0]+' · '+q[1]+'<br><span class="sub">'+k+'</span></span><div class="track"><div class="fill" style="width:'+Math.max(v[1],6)+'%;background:'+gcol[k]+'">'+v[0]+' ('+v[1]+'%)</div></div></div>';}).join('');}
 document.getElementById('gn').textContent=C.good.n;document.getElementById('bn2').textContent=C.bad.n;
 document.getElementById('gcmp').innerHTML=cmpBars(C.good);
 document.getElementById('bcmp').innerHTML=cmpBars(C.bad);
-document.getElementById('cmpnote').innerHTML='Both cohorts graded against the same benchmark (SLA '+m.bench.sla+'%, daily complaint '+m.bench.cr+'%). Near-identical distributions = network barely changes the service outcome.';
+document.getElementById('cmpnote').innerHTML='Each row is a complaint x SLA quadrant, both cohorts graded against the same benchmark (SLA '+m.bench.sla+'%, daily complaint '+m.bench.cr+'%). If complaints were proportional to network, the Bad-Network side would tilt heavily toward "High complaint". It does not - the two sides look almost identical, so complaints track SLA, not network.';
 // cards + bars for bad cohort
 document.getElementById('cards').innerHTML=[
  ['#dc2626',m.grp.Failing,'Failing','complaints worse + SLA below benchmark'],
